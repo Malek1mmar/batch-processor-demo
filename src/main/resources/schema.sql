@@ -1,5 +1,15 @@
-CREATE TABLE people (
-                        id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                        first_name VARCHAR(100),
-                        last_name VARCHAR(100)
+CREATE TABLE IF NOT EXISTS transactions
+(
+    id
+    BIGSERIAL
+    PRIMARY
+    KEY,
+    trx_date
+    DATE
+    NOT
+    NULL,
+    description
+    VARCHAR(255) NOT NULL,
+    amount NUMERIC(12,2) NOT NULL,
+    category VARCHAR(100) NOT NULL
 );

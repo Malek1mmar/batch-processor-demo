@@ -1,46 +1,58 @@
-# Spring Batch Demo
-
-A minimal **Spring Batch** project using **Spring Boot** that demonstrates reading data from a CSV file, processing it, and writing the results to the console.
+# Spring Batch Transaction Processor
 
 ## 📌 Overview
+This project is a Spring Batch application that:
+1. Reads transaction data from a CSV file.
+2. Transforms and cleans the data.
+3. Saves it to a PostgreSQL database.
+4. Generates a category-based summary report.
 
-This project:
-- Reads records from a CSV file (`persons.csv`).
-- Processes each record by converting first and last names to uppercase.
-- Writes the transformed records to the console.
-- Uses **chunk-oriented processing** with Spring Batch.
-
----
-
-## 🛠 Tech Stack
-
-- **Java 17+** (or compatible version)
-- **Spring Boot 3.x**
-- **Spring Batch**
-- **Maven**
-
----
-
-## 📄 Example Input File
-
-**`src/main/resources/persons.csv`**
-```csv
-John,Doe
-Jane,Smith
-Bob,Brown
-```
+## 🏗 Architecture
+Reader (CSV) → Processor (Transform) → Writer (DB) → Aggregator → Report Writer (TXT)
 
 ## ⚙️ How It Works
 
-### Reader
-Uses **FlatFileItemReader** to read rows from a CSV file.
+### Step 1 - Import Transactions
+- Uses `FlatFileItemReader` to read CSV rows.
+- `TransactionItemProcessor` cleans and categorizes data.
+- Writes to `transactions` table via `JdbcBatchItemWriter`.
 
-### Processor
-`PersonItemProcessor` converts both `firstName` and `lastName` to uppercase.
+### Step 2 - Generate Report
+- Uses `JdbcCursorItemReader` to fetch aggregated totals.
+- Writes results to a `.txt` file with category totals.
 
-### Writer
-Outputs the processed data to the console  
-*(can be replaced with database writing or other destinations)*.
+## 🗄 Database
+**Table: `transactions`**
+| Column       | Type         |
+|--------------|--------------|
+| id           | BIGSERIAL PK |
+| date         | DATE         |
+| description  | VARCHAR(255) |
+| amount       | NUMERIC(12,2)|
+| category     | VARCHAR(100) |
 
-### Chunk Size
-Processes **3 items at a time** in a single transaction for efficiency and atomicity.
+## 🚀 Running the App
+```bash
+mvn spring-boot:run
+```
+Or with parameters:
+```bash
+mvn spring-boot:run -Dspring-boot.run.arguments="inputFile=transactions.csv"
+```
+
+## 📂 Input CSV Example
+```
+date,description,amount
+2025-08-01,Walmart,-54.23
+2025-08-02,Amazon,-120.75
+2025-08-03,Landlord,-800.00
+```
+
+## 📄 Output Report Example
+```
+===== Transaction Summary =====
+GROCERY: -54.23
+SHOPPING: -120.75
+RENT: -800.00
+===============================
+```

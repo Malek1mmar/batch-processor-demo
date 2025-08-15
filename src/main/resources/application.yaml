@@ -1,11 +1,21 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
+    url: jdbc:postgresql://localhost:5432/batchdb
+    username: batchuser
+    password: batchpass
+    driver-class-name: org.postgresql.Driver
   batch:
-    initialize-schema: always  # Create batch tables automatically on startup
+    jdbc:
+      initialize-schema: always
+  sql:
+    init:
+      # Run our own schema.sql to create the 'transactions' table
+      mode: always
+
 logging:
   level:
     root: INFO
+
+app:
+  input-file: classpath:transactions.csv
+  report-file: ./build/report/summary.txt
