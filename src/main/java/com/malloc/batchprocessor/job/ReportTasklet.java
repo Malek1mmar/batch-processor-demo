@@ -10,6 +10,7 @@ import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.lang.NonNull;
 
 public class ReportTasklet implements Tasklet {
 
@@ -22,9 +23,9 @@ public class ReportTasklet implements Tasklet {
   }
 
   @Override
-  public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+  public RepeatStatus execute(@NonNull StepContribution contribution, @NonNull ChunkContext chunkContext) throws Exception {
     var rows = jdbcTemplate.queryForList(
-        "SELECT category, SUM(amount) AS total FROM transactions GROUP BY category ORDER BY category");
+        "SELECT category, SUM(amount) AS total FROM transactions GROUP BY category ORDER BY total DESC");
 
     StringBuilder sb = new StringBuilder();
     sb.append("===== Transaction Summary =====\n");

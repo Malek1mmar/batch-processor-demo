@@ -21,10 +21,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
@@ -57,7 +55,7 @@ public class BatchConfig {
 
   // ---- Writer (Transaction -> DB) ----
   @Bean
-  public org.springframework.batch.item.database.JdbcBatchItemWriter<Transaction> transactionWriter(
+  public JdbcBatchItemWriter<Transaction> transactionWriter(
       DataSource dataSource) {
 
     return new JdbcBatchItemWriterBuilder<Transaction>()
@@ -76,7 +74,7 @@ public class BatchConfig {
       PlatformTransactionManager transactionManager,
       FlatFileItemReader<TransactionCsv> transactionReader,
       ItemProcessor<TransactionCsv, Transaction> transactionProcessor,
-      org.springframework.batch.item.database.JdbcBatchItemWriter<Transaction> transactionWriter) {
+      JdbcBatchItemWriter<Transaction> transactionWriter) {
 
     return new StepBuilder("importStep", jobRepository)
         .<TransactionCsv, Transaction>chunk(500, transactionManager)

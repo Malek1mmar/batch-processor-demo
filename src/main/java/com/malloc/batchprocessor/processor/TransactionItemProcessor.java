@@ -17,7 +17,6 @@ public class TransactionItemProcessor implements ItemProcessor<TransactionCsv, T
     LocalDate date = LocalDate.parse(item.date(), ISO);
     String desc = item.description();
     BigDecimal amount = item.amount();
-
     String category = categorize(desc);
     return new Transaction(date, desc, amount, category);
   }

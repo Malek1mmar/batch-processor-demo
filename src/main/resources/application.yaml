@@ -18,4 +18,4 @@ logging:
 
 app:
   input-file: classpath:transactions.csv
-  report-file: ./build/report/summary.txt
+  report-file: ./reports/summary.txt
